@@ -274,7 +274,53 @@ src-tauri\target\x86_64-pc-windows-gnu\release\blacksite-node.exe
 
 ---
 
-## V. SECURITY PROPERTIES SUMMARY
+## V. PORTABLE DEPLOYMENT (GNU TOOLCHAIN)
+
+### The GNU Runtime Dependency
+
+Because Blacksite Node is compiled with the **GNU toolchain** (`x86_64-pc-windows-gnu`), the release binary does not statically link the WebView2 loader. The portable deployment is a **two-file pair** — both must reside in the same directory for the application to initialize its rendering engine.
+
+```
+blacksite-node.exe    ← main application binary
+WebView2Loader.dll    ← WebView2 runtime bridge (GNU toolchain dependency)
+```
+
+If `WebView2Loader.dll` is absent from the directory, the application will fail to launch with a missing DLL error before any window appears.
+
+Both files are produced by `npm run tauri build` and are located at:
+
+```
+src-tauri\target\x86_64-pc-windows-gnu\release\blacksite-node.exe
+src-tauri\target\x86_64-pc-windows-gnu\release\WebView2Loader.dll
+```
+
+### USB Deployment Layout
+
+For operators running Blacksite Node from an encrypted USB drive with zero Windows Registry footprint, copy both files together:
+
+```
+[USB Drive]
+├── blacksite-node.exe
+├── WebView2Loader.dll
+└── README.txt
+```
+
+> **Note:** The vault file (`vault.blacksite`) is written to the host machine's `%APPDATA%\com.blacksite.node\` directory, not to the USB drive. The USB carries only the stateless executable pair. If a fully self-contained deployment is required — vault traveling with the binary — see the wrapper script pattern in Section VI.
+
+### WebView2 Runtime Requirement
+
+The target machine must have the **Microsoft WebView2 Runtime** installed. On Windows 10 (version 1803+) and Windows 11, WebView2 ships as a system component and is updated automatically. On air-gapped or minimal installations, the NSIS installer (`Blacksite Node_0.1.0_x64-setup.exe`) bundles an offline WebView2 installer and handles this automatically.
+
+For the portable binary on machines without WebView2, install the runtime manually before running:
+
+```
+https://developer.microsoft.com/en-us/microsoft-edge/webview2/
+→ Download: Evergreen Bootstrapper or Standalone Installer (x64)
+```
+
+---
+
+## VI. SECURITY PROPERTIES SUMMARY
 
 | Property | Implementation |
 |---|---|
@@ -292,7 +338,7 @@ src-tauri\target\x86_64-pc-windows-gnu\release\blacksite-node.exe
 
 ---
 
-## VI. DISTRIBUTION & DEPLOYMENT
+## VII. DISTRIBUTION & DEPLOYMENT
 
 ### Pre-Compiled Binaries
 

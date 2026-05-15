@@ -18,3 +18,10 @@ target = "x86_64-pc-windows-gnu"
 linker = "D:\\msys64\\mingw64\\bin\\gcc.exe"
 ar     = "D:\\msys64\\mingw64\\bin\\ar.exe"
 rustflags = ["-C", "link-arg=-fuse-ld=lld"]
+
+# Explicit tool paths for build scripts — prevents "windres not found" errors
+# when building from terminals that do not have D:\msys64\mingw64\bin in PATH.
+# tauri-winres / embed-resource respect the WINDRES env var to locate the
+# Windows Resource Compiler without requiring a full PATH configuration.
+[env]
+WINDRES = "D:\\msys64\\mingw64\\bin\\windres.exe"
