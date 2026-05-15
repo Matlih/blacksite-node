@@ -1,0 +1,20 @@
+# Blacksite Node — Cargo build configuration
+#
+# Toolchain: x86_64-pc-windows-gnu with LLVM LLD as the linker.
+#
+# Why LLD instead of GNU ld:
+#   GNU binutils ld (from MSYS2 mingw64) has a 16-bit export ordinal limit
+#   (~65535). Tauri's windows-sys crate exceeds this (ordinal 101051), causing
+#   a hard link failure. LLVM LLD (ld.lld) has no such limitation.
+#
+# Mechanism:
+#   -fuse-ld=lld tells GCC to invoke ld.lld.exe instead of ld.exe.
+#   MSYS2 mingw-w64-x86_64-lld provides ld.lld.exe at D:\msys64\mingw64\bin\.
+
+[build]
+target = "x86_64-pc-windows-gnu"
+
+[target.x86_64-pc-windows-gnu]
+linker = "D:\\msys64\\mingw64\\bin\\gcc.exe"
+ar     = "D:\\msys64\\mingw64\\bin\\ar.exe"
+rustflags = ["-C", "link-arg=-fuse-ld=lld"]

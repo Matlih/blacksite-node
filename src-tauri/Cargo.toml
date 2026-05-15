@@ -1,0 +1,60 @@
+[package]
+name = "blacksite-node"
+version = "0.1.0"
+description = "Blacksite Node — Sovereign Offline Password Manager"
+authors = ["Blacksite Operator"]
+edition = "2021"
+
+[lib]
+# _lib suffix avoids Windows linker collision between lib and bin crate names.
+# See: https://github.com/rust-lang/cargo/issues/8519
+name = "blacksite_node_lib"
+# Desktop-only: rlib is all the binary needs.
+# cdylib (Windows DLL) and staticlib (iOS) are mobile-only targets.
+# cdylib exceeds the Windows PE 65535-export limit when windows-sys is in the tree.
+crate-type = ["rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+# --- Tauri runtime ---
+tauri = { version = "2", features = [] }
+tauri-plugin-opener = "2"
+
+# --- Serialization ---
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# --- Cryptographic primitives ---
+# Argon2id: memory-hard KDF, winner of the Password Hashing Competition.
+# Chosen over bcrypt/scrypt for its resistance to GPU/ASIC parallelism attacks
+# via its mandatory memory-access pattern. The `password-hash` feature enables
+# the PHC string format for safe parameter storage.
+argon2 = { version = "0.5", features = ["std"] }
+
+# ChaCha20-Poly1305: authenticated AEAD cipher. Preferred over AES-GCM in
+# software-only environments because it has no timing side-channel when
+# implemented without hardware acceleration (AES-NI). The Poly1305 MAC
+# provides 128-bit security against forgery attacks.
+chacha20poly1305 = { version = "0.10", features = ["std"] }
+
+# CSPRNG: OS-seeded cryptographically secure random number generator.
+# All key material, nonces, and salt generation MUST use this crate.
+# Never use Rust's `std::random` or any deterministic RNG for security material.
+rand = "0.8"
+
+# Async runtime for non-blocking Tauri command execution.
+tokio = { version = "1", features = ["full"] }
+
+# Time utilities for the exponential backoff rate limiter.
+# Using std::time::Instant internally; this is for Duration helpers.
+thiserror = "1"
+
+# Zeroize: cryptographic memory wipe. Ensures master key bytes are overwritten
+# with zeros when dropped, preventing key material from persisting in freed
+# heap memory where it could be recovered via memory forensics.
+zeroize = { version = "1", features = ["derive"] }
+
+# Unicode normalization for the multilingual Diceware sanitization pipeline.
+unicode-normalization = "0.1"

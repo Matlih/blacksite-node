@@ -1,0 +1,110 @@
+/* Blacksite Node — Global Stylesheet
+ * TailwindCSS base + tactical overrides.
+ * No animations beyond cursor blink. No gradients. Matte only.
+ */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Force monospace everywhere — data integrity requires fixed-width chars */
+  * {
+    font-family: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+    box-sizing: border-box;
+  }
+
+  html, body, #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #0d0f12;
+    color: #c8cdd6;
+    overflow: hidden;
+  }
+
+  /* Prevent text selection on UI chrome — only allow in data fields */
+  body {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* Allow selection in input and data display elements */
+  input, textarea, [data-selectable] {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+
+  /* Scrollbar — dark ops aesthetic */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #13161b;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #2e3540;
+    border-radius: 0;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #3a4250;
+  }
+}
+
+@layer components {
+  /* Tactical input — sharp edges, no border-radius, high contrast focus ring */
+  .input-ops {
+    @apply w-full bg-gunmetal-800 border border-ops-600 text-slate-text
+           px-3 py-2 rounded-none outline-none
+           focus:border-blue-ops focus:ring-1 focus:ring-blue-ops
+           placeholder:text-slate-label font-mono text-sm;
+  }
+
+  /* Primary action button */
+  .btn-primary {
+    @apply bg-blue-muted border border-blue-ops text-slate-text font-mono
+           px-4 py-2 rounded-none uppercase tracking-widest text-xs
+           hover:bg-blue-ops active:bg-blue-active
+           disabled:opacity-40 disabled:cursor-not-allowed
+           transition-colors duration-100;
+  }
+
+  /* Danger / lockout button */
+  .btn-danger {
+    @apply bg-red-dim border border-red-muted text-red-critical font-mono
+           px-4 py-2 rounded-none uppercase tracking-widest text-xs
+           hover:bg-red-muted active:border-red-alert
+           disabled:opacity-40 disabled:cursor-not-allowed
+           transition-colors duration-100;
+  }
+
+  /* Ghost button — secondary actions */
+  .btn-ghost {
+    @apply bg-transparent border border-ops-600 text-slate-dim font-mono
+           px-4 py-2 rounded-none uppercase tracking-widest text-xs
+           hover:border-ops-500 hover:text-slate-text
+           disabled:opacity-40 disabled:cursor-not-allowed
+           transition-colors duration-100;
+  }
+
+  /* Data table row */
+  .table-row-ops {
+    @apply border-b border-ops-700 hover:bg-ops-800 transition-colors duration-75;
+  }
+
+  /* Panel / card surface */
+  .panel-ops {
+    @apply bg-ops-900 border border-ops-700;
+  }
+
+  /* Terminal prompt cursor blink */
+  .cursor-blink::after {
+    content: '_';
+    animation: blink 1s step-end infinite;
+  }
+
+  /* Section label — muted, all-caps */
+  .label-ops {
+    @apply text-slate-label text-xs uppercase tracking-widest font-mono;
+  }
+}
