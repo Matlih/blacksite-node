@@ -18,7 +18,7 @@ Blacksite Node is a fully offline, zero-knowledge password manager. There is no 
 
 ```
 ┌─────────────────────────────────────────────────┐
-│  React (TypeScript)  ·  Vite  ·  TailwindCSS   │  ← Untrusted display layer
+│  React (TypeScript)  ·  Vite  ·  TailwindCSS    │  ← Untrusted display layer
 │  Tauri v2 IPC bridge (JSON over secure channel) │  ← Isolation boundary
 │  Rust cryptographic backend                     │  ← Single source of truth
 │  OS filesystem  ·  vault.blacksite              │  ← One encrypted file
